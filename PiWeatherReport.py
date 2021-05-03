@@ -60,6 +60,10 @@ def display( item_left, item_right ):
 
 		draw.line( (x, 2, x, device.height - 2), fill="white", width=1 )
 
+def toHourUNIXTime( UNIXTime ):
+	hourSec  = 60 * 60
+	return int( UNIXTime / hourSec ) * hourSec
+
 def getNextHourUNIXTime( UNIXTime ):
 	hourSec  = 60 * 60
 	currHour = int( UNIXTime / hourSec ) * hourSec

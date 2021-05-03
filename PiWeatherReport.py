@@ -76,19 +76,20 @@ def main():
 		response = getResponse()
 		data = toJson( response )
 
+		currentUNIXTime = time.time()
 		for i in range( len(data["hourly"]) ):
 			#skip older items from current time
-			if time.time() > data["hourly"][i]["dt"]:
+			if toHourUNIXTime( currentUNIXTime ) < data["hourly"][i]["dt"]:
 				continue
 
-			item_left = ( datetime.fromtimestamp(data["hourly"][i + 0]["dt"]),
-						data["hourly"][i + 0]["temp"],
-						data["hourly"][i + 0]["humidity"],
-						data["hourly"][i + 0]["weather"][0]["icon"] )
-			item_right = ( datetime.fromtimestamp(data["hourly"][i + 1]["dt"]),
+			item_left = ( datetime.fromtimestamp(data["hourly"][i + 1]["dt"]),
 						data["hourly"][i + 1]["temp"],
 						data["hourly"][i + 1]["humidity"],
 						data["hourly"][i + 1]["weather"][0]["icon"] )
+			item_right = ( datetime.fromtimestamp(data["hourly"][i + 2]["dt"]),
+						data["hourly"][i + 2]["temp"],
+						data["hourly"][i + 2]["humidity"],
+						data["hourly"][i + 2]["weather"][0]["icon"] )
 			display( item_left, item_right )
 			break
 

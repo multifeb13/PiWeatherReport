@@ -82,14 +82,16 @@ def main():
 			if toHourUNIXTime( currentUNIXTime ) < data["hourly"][i]["dt"]:
 				continue
 
-			item_left = ( datetime.fromtimestamp(data["hourly"][i + 1]["dt"]),
-						data["hourly"][i + 1]["temp"],
-						data["hourly"][i + 1]["humidity"],
-						data["hourly"][i + 1]["weather"][0]["icon"] )
-			item_right = ( datetime.fromtimestamp(data["hourly"][i + 2]["dt"]),
-						data["hourly"][i + 2]["temp"],
-						data["hourly"][i + 2]["humidity"],
-						data["hourly"][i + 2]["weather"][0]["icon"] )
+			#Current hour + 3
+			item_left = ( datetime.fromtimestamp(data["hourly"][i + 3]["dt"]),
+						data["hourly"][i + 3]["temp"],
+						data["hourly"][i + 3]["humidity"],
+						data["hourly"][i + 3]["weather"][0]["icon"] )
+			#Current hour + 6
+			item_right = ( datetime.fromtimestamp(data["hourly"][i + 6]["dt"]),
+						data["hourly"][i + 6]["temp"],
+						data["hourly"][i + 6]["humidity"],
+						data["hourly"][i + 6]["weather"][0]["icon"] )
 			display( item_left, item_right )
 			break
 

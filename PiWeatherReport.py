@@ -39,7 +39,7 @@ def toJson( response ):
 	return json.loads( response.text )
 
 def display( item_left, item_right ):
-	icon_pixel = int( device.height * 0.9 )
+	icon_pixel = int( device.height * 0.7 )
 
 	with canvas(device) as draw:
 		for i in range( 0, 2 ):

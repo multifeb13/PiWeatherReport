@@ -54,7 +54,7 @@ def display( item_left, item_right ):
 
 			logo = Image.open(os.path.join(icondir,  item[3][0:2] + ".bmp"))
 			logo_resize = logo.resize((icon_pixel, icon_pixel))
-			draw.bitmap((x,6), logo_resize, fill='white')
+			draw.bitmap((x + 6,6), logo_resize, fill='white')
 
 			draw.text((x + 6, 52), str(int(item[1])) + "°C" + " / " + str(int(item[2])) + "%", font=font10, fill="white")
 

@@ -1,6 +1,5 @@
 #https://qiita.com/optimisuke/items/87d4846de15736b599e4
 
-import requests
 import json
 import time
 from datetime import datetime
@@ -16,8 +15,8 @@ import os
 
 from time import sleep
 
-API_KEY = "{API_KEY}"
-api = "https://api.openweathermap.org/data/2.5/onecall?lat=35.681236&lon=139.767125&units=metric&lang=ja&appid={key}"
+#for WebAPI
+import weatherapi
 
 #for OLED
 serial = i2c(port=1, address=0x3C)
@@ -28,12 +27,6 @@ font10 = ImageFont.truetype(ttf, 10)
 
 basedir = os.path.dirname(os.path.realpath(__file__))
 icondir = os.path.join(basedir, 'icons')
-
-def getResponse():
-	url = api.format(key = API_KEY)
-	#print(url)
-
-	return requests.get(url)
 
 def toJson( response ):
 	return json.loads( response.text )
@@ -72,9 +65,9 @@ def getNextHourUNIXTime( UNIXTime ):
 	return nextHour
 
 def main():
+	response = weatherapi.weatherapi()
 	while True:
-		response = getResponse()
-		data = toJson( response )
+		data = toJson( response.get() )
 
 		currentUNIXTime = time.time()
 		for i in range( len(data["hourly"]) ):

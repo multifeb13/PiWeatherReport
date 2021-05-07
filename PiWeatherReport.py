@@ -1,5 +1,3 @@
-#https://qiita.com/optimisuke/items/87d4846de15736b599e4
-
 import json
 import time
 from datetime import datetime

@@ -34,6 +34,25 @@ def get_display_item( data, index ):
 			data["hourly"][index]["humidity"],
 			data["hourly"][index]["weather"][0]["icon"] )
 
+def display_item( draw, item, index_lr ):
+	icon_pixel = int( device.height * 0.7 )
+	if index_lr == 0:
+		x = 0
+	else:
+		x = device.width / 2
+
+	draw.text((x + 6, 0), item[0].strftime( "%H:%M"), font=font10, fill="white")
+
+	logo = Image.open(os.path.join(icondir,  item[3][0:2] + ".bmp"))
+	logo_resize = logo.resize((icon_pixel, icon_pixel))
+	draw.bitmap((x + 6,6), logo_resize, fill='white')
+
+	draw.text((x + 6, 52), str(int(item[1])) + "°C" + " / " + str(int(item[2])) + "%", font=font10, fill="white")
+
+def display_separator( draw ):
+	x = device.width / 2
+	draw.line( (x, 2, x, device.height - 2), fill="white", width=1 )
+
 def display( data ):
 	currentUNIXTime = time.time()
 	for i in range( len(data["hourly"]) ):
@@ -47,26 +66,10 @@ def display( data ):
 		item_right = get_display_item( data, i+6 )
 		break
 
-	icon_pixel = int( device.height * 0.7 )
-
 	with canvas(device) as draw:
-		for i in range( 0, 2 ):
-			if i == 0:
-				item = item_left
-				x = 0
-			else:
-				item = item_right
-				x = device.width / 2
-
-			draw.text((x + 6, 0), item[0].strftime( "%H:%M"), font=font10, fill="white")
-
-			logo = Image.open(os.path.join(icondir,  item[3][0:2] + ".bmp"))
-			logo_resize = logo.resize((icon_pixel, icon_pixel))
-			draw.bitmap((x + 6,6), logo_resize, fill='white')
-
-			draw.text((x + 6, 52), str(int(item[1])) + "°C" + " / " + str(int(item[2])) + "%", font=font10, fill="white")
-
-		draw.line( (x, 2, x, device.height - 2), fill="white", width=1 )
+		display_item( draw, item_left,  0 )
+		display_item( draw, item_right, 1 )
+		display_separator( draw )
 
 def toHourUNIXTime( UNIXTime ):
 	hourSec  = 60 * 60

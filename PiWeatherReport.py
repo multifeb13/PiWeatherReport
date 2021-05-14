@@ -28,7 +28,25 @@ icondir = os.path.join(basedir, 'icons')
 def toJson( response ):
 	return json.loads( response.text )
 
-def display( item_left, item_right ):
+def get_display_item( data, index ):
+	return ( datetime.fromtimestamp(data["hourly"][index]["dt"]),
+			data["hourly"][index]["temp"],
+			data["hourly"][index]["humidity"],
+			data["hourly"][index]["weather"][0]["icon"] )
+
+def display( data ):
+	currentUNIXTime = time.time()
+	for i in range( len(data["hourly"]) ):
+		#skip older items from current time
+		if toHourUNIXTime( currentUNIXTime ) < data["hourly"][i]["dt"]:
+			continue
+
+		#Current hour + 3
+		item_left  = get_display_item( data, i+3 )
+		#Current hour + 6
+		item_right = get_display_item( data, i+6 )
+		break
+
 	icon_pixel = int( device.height * 0.7 )
 
 	with canvas(device) as draw:
@@ -65,25 +83,7 @@ def main():
 	response = weatherapi.weatherapi()
 	while True:
 		data = toJson( response.get() )
-
-		currentUNIXTime = time.time()
-		for i in range( len(data["hourly"]) ):
-			#skip older items from current time
-			if toHourUNIXTime( currentUNIXTime ) < data["hourly"][i]["dt"]:
-				continue
-
-			#Current hour + 3
-			item_left = ( datetime.fromtimestamp(data["hourly"][i + 3]["dt"]),
-						data["hourly"][i + 3]["temp"],
-						data["hourly"][i + 3]["humidity"],
-						data["hourly"][i + 3]["weather"][0]["icon"] )
-			#Current hour + 6
-			item_right = ( datetime.fromtimestamp(data["hourly"][i + 6]["dt"]),
-						data["hourly"][i + 6]["temp"],
-						data["hourly"][i + 6]["humidity"],
-						data["hourly"][i + 6]["weather"][0]["icon"] )
-			display( item_left, item_right )
-			break
+		display( data )
 
 		timeCurrentUNIXTime = time.time()
 		sleep( getNextHourUNIXTime( timeCurrentUNIXTime ) - timeCurrentUNIXTime )

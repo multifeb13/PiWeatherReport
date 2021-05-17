@@ -24,6 +24,7 @@ device = ssd1306(serial)	# 128x64
 import imagefont
 ttf = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 font10 = None
+font32 = None
 
 basedir = os.path.dirname(os.path.realpath(__file__))
 icondir = os.path.join(basedir, 'icons')
@@ -37,12 +38,9 @@ def get_display_item( data, index ):
 			data["hourly"][index]["humidity"],
 			data["hourly"][index]["weather"][0]["icon"] )
 
-def display_item( draw, item, index_lr ):
+def display_item( draw, item ):
 	icon_pixel = int( device.height * 0.7 )
-	if index_lr == 0:
-		x = 0
-	else:
-		x = device.width / 2
+	x = 0
 
 	draw.text((x + 6, 0), item[0].strftime( "%H:%M"), font=font10, fill="white")
 
@@ -52,9 +50,17 @@ def display_item( draw, item, index_lr ):
 
 	draw.text((x + 6, 52), str(int(item[1])) + "°C" + " / " + str(int(item[2])) + "%", font=font10, fill="white")
 
-def display_separator( draw ):
+def display_clock( draw, timestamp ):
 	x = device.width / 2
-	draw.line( (x, 2, x, device.height - 2), fill="white", width=1 )
+	time_datetime = datetime.fromtimestamp(timestamp)
+
+	draw.text((x + 12,  0), time_datetime.strftime( "%H"), font=font32, fill="white")
+	draw.text((x + 12, 30), time_datetime.strftime( "%M"), font=font32, fill="white")
+
+def display_screen( item, time ):
+	with canvas(device) as draw:
+		display_item( draw, item )
+		display_clock( draw, time )
 
 def display( data ):
 	currentUNIXTime = time.time()
@@ -64,15 +70,18 @@ def display( data ):
 			continue
 
 		#Current hour + 3
-		item_left  = get_display_item( data, i+3 )
-		#Current hour + 6
-		item_right = get_display_item( data, i+6 )
+		item = get_display_item( data, i+3 )
 		break
 
-	with canvas(device) as draw:
-		display_item( draw, item_left,  0 )
-		display_item( draw, item_right, 1 )
-		display_separator( draw )
+	time_curr = int(time.time())
+	time_prev = time_curr
+	display_screen( item, time_curr )
+	while (time_curr % 3600) != 0:
+		time_curr = int(time.time())
+		if (time_curr % 60 == 0) and (time_prev % 60 != 0):
+			display_screen( item, time_curr )
+		time_prev = time_curr
+		time.sleep(0.25)
 
 def toHourUNIXTime( UNIXTime ):
 	hourSec  = 60 * 60
@@ -91,6 +100,10 @@ def main():
 	font10 = imagefont.imagefont.font(ttf, 10)
 	if font10 == None:
 		sys.exit("** Err Not found : %s" % ttf)
+	global font32
+	font32 = imagefont.imagefont.font(ttf, 32)
+	if font32 == None:
+		sys.exit("** Err Not found : %s" % ttf)
 	while True:
 		api_data = response.get()
 		if response.status_code() != 200:
@@ -98,9 +111,6 @@ def main():
 
 		data = toJson( api_data )
 		display( data )
-
-		timeCurrentUNIXTime = time.time()
-		sleep( getNextHourUNIXTime( timeCurrentUNIXTime ) - timeCurrentUNIXTime )
 
 if __name__ == '__main__':
 	main()

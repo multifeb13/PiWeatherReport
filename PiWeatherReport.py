@@ -9,6 +9,7 @@ from luma.oled.device import ssd1306
 from PIL import Image, ImageDraw, ImageOps, ImageChops
 
 import os
+import sys
 
 from time import sleep
 
@@ -91,7 +92,11 @@ def main():
 	if font10 == None:
 		print("** Not found : %s" % ttf)
 	while True:
-		data = toJson( response.get() )
+		api_data = response.get()
+		if response.status_code() != 200:
+			sys.exit("** Err Response : %d" % response.status_code())
+
+		data = toJson( api_data )
 		display( data )
 
 		timeCurrentUNIXTime = time.time()

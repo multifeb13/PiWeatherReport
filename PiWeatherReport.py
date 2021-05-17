@@ -90,7 +90,7 @@ def main():
 	global font10
 	font10 = imagefont.imagefont.font(ttf, 10)
 	if font10 == None:
-		print("** Not found : %s" % ttf)
+		sys.exit("** Err Not found : %s" % ttf)
 	while True:
 		api_data = response.get()
 		if response.status_code() != 200:

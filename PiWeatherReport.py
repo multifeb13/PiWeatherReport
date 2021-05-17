@@ -6,7 +6,7 @@ from datetime import datetime
 from luma.core.interface.serial import i2c
 from luma.core.render import canvas
 from luma.oled.device import ssd1306
-from PIL import Image, ImageFont, ImageDraw, ImageOps, ImageChops
+from PIL import Image, ImageDraw, ImageOps, ImageChops
 
 import os
 
@@ -19,8 +19,10 @@ import weatherapi
 serial = i2c(port=1, address=0x3C)
 device = ssd1306(serial)	# 128x64
 
+#for ImageFont
+import imagefont
 ttf = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
-font10 = ImageFont.truetype(ttf, 10)
+font10 = None
 
 basedir = os.path.dirname(os.path.realpath(__file__))
 icondir = os.path.join(basedir, 'icons')
@@ -84,6 +86,10 @@ def getNextHourUNIXTime( UNIXTime ):
 
 def main():
 	response = weatherapi.weatherapi()
+	global font10
+	font10 = imagefont.imagefont.font(ttf, 10)
+	if font10 == None:
+		print("** Not found : %s" % ttf)
 	while True:
 		data = toJson( response.get() )
 		display( data )

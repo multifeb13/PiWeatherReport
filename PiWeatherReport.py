@@ -59,15 +59,7 @@ def display_screen( item, time ):
 		display_clock( draw, time )
 
 def display( data ):
-	currentUNIXTime = time.time()
-	for i in range( len(data["hourly"]) ):
-		#skip older items from current time
-		if toHourUNIXTime( currentUNIXTime ) < data["hourly"][i]["dt"]:
-			continue
-
-		#Current hour + 3
-		item = get_display_item( data, i+3 )
-		break
+	item = get_display_item( data, 3 )	#Current hour + 3
 
 	time_curr = int(time.time())
 	time_prev = time_curr
@@ -78,10 +70,6 @@ def display( data ):
 			display_screen( item, time_curr )
 		time_prev = time_curr
 		time.sleep(0.25)
-
-def toHourUNIXTime( UNIXTime ):
-	hourSec  = 60 * 60
-	return int( UNIXTime / hourSec ) * hourSec
 
 def getNextHourUNIXTime( UNIXTime ):
 	hourSec  = 60 * 60

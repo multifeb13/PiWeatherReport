@@ -5,7 +5,7 @@ from datetime import datetime
 from luma.core.interface.serial import i2c
 from luma.core.render import canvas
 from luma.oled.device import ssd1306
-from PIL import Image, ImageDraw, ImageOps, ImageChops
+from PIL import Image
 
 import os
 import sys

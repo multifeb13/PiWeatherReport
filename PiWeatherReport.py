@@ -53,26 +53,10 @@ def display_separator( draw ):
 	draw.line( (x, 2, x, device.height - 2), fill="white", width=1 )
 
 def display( data ):
-	currentUNIXTime = time.time()
-	for i in range( len(data["hourly"]) ):
-		#skip older items from current time
-		if toHourUNIXTime( currentUNIXTime ) < data["hourly"][i]["dt"]:
-			continue
-
-		#Current hour + 3
-		item_left  = get_display_item( data, i+3 )
-		#Current hour + 6
-		item_right = get_display_item( data, i+6 )
-		break
-
 	with canvas(device) as draw:
-		display_item( draw, item_left,  0 )
-		display_item( draw, item_right, 1 )
+		display_item( draw, get_display_item( data, 3 ),  0 )	#Current hour + 3
+		display_item( draw, get_display_item( data, 6 ),  1 )	#Current hour + 6
 		display_separator( draw )
-
-def toHourUNIXTime( UNIXTime ):
-	hourSec  = 60 * 60
-	return int( UNIXTime / hourSec ) * hourSec
 
 def getNextHourUNIXTime( UNIXTime ):
 	hourSec  = 60 * 60

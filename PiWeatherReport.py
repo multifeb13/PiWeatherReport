@@ -1,4 +1,3 @@
-import json
 import time
 from datetime import datetime
 
@@ -28,9 +27,6 @@ font32 = None
 
 basedir = os.path.dirname(os.path.realpath(__file__))
 icondir = os.path.join(basedir, 'icons')
-
-def toJson( response ):
-	return json.loads( response.text )
 
 def get_display_item( data, index ):
 	return ( datetime.fromtimestamp(data["hourly"][index]["dt"]),
@@ -105,12 +101,11 @@ def main():
 	if font32 == None:
 		sys.exit("** Err Not found : %s" % ttf)
 	while True:
-		api_data = response.get()
+		api_data = response.get(True)
 		if response.status_code() != 200:
 			sys.exit("** Err Response : %d" % response.status_code())
 
-		data = toJson( api_data )
-		display( data )
+		display( api_data )
 
 if __name__ == '__main__':
 	main()

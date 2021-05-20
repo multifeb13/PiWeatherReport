@@ -36,6 +36,7 @@ def cbr_every_minute():
 import imagefont
 ttf = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 font10 = None
+#font32 = None
 
 basedir = os.path.dirname(os.path.realpath(__file__))
 icondir = os.path.join(basedir, 'icons')
@@ -65,11 +66,23 @@ def display_separator( draw ):
 	x = device.width / 2
 	draw.line( (x, 2, x, device.height - 2), fill="white", width=1 )
 
+def display_clock( draw, timestamp ):
+	x = device.width / 2
+	time_datetime = datetime.fromtimestamp(timestamp)
+
+	draw.text((x + 12,  0), time_datetime.strftime( "%H"), font=font32, fill="white")
+	draw.text((x + 12, 30), time_datetime.strftime( "%M"), font=font32, fill="white")
+
 def display( data ):
 	with canvas(device) as draw:
 		display_item( draw, get_display_item( data, 3 ),  0 )	#Current hour + 3
 		display_item( draw, get_display_item( data, 6 ),  1 )	#Current hour + 6
 		display_separator( draw )
+	"""
+	with canvas(device) as draw:
+		display_item( draw, get_display_item( data, 3 ), 0 )	#Current hour + 3
+		display_clock( draw, int(time.time()) )
+	"""
 
 def main():
 	response = weatherapi.weatherapi()
@@ -77,6 +90,12 @@ def main():
 	font10 = imagefont.imagefont.font(ttf, 10)
 	if font10 == None:
 		sys.exit("** Err Not found : %s" % ttf)
+	"""
+	global font32
+	font32 = imagefont.imagefont.font(ttf, 32)
+	if font32 == None:
+		sys.exit("** Err Not found : %s" % ttf)
+	"""
 	global m_update_data
 	global m_update_disp
 	schedule.every().hour.at(":00").do(cbr_every_hour)

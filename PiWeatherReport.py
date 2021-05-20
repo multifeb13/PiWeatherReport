@@ -1,3 +1,4 @@
+import schedule
 import time
 from datetime import datetime
 
@@ -18,6 +19,18 @@ import weatherapi
 #for OLED
 serial = i2c(port=1, address=0x3C)
 device = ssd1306(serial)	# 128x64
+
+m_update_data = True
+m_update_disp = True
+def cbr_every_hour():
+	global m_update_data
+	global m_update_disp
+	m_update_data = True
+	m_update_disp = True
+
+def cbr_every_minute():
+	global m_update_disp
+	m_update_disp = True
 
 #for ImageFont
 import imagefont
@@ -58,28 +71,28 @@ def display( data ):
 		display_item( draw, get_display_item( data, 6 ),  1 )	#Current hour + 6
 		display_separator( draw )
 
-def getNextHourUNIXTime( UNIXTime ):
-	hourSec  = 60 * 60
-	currHour = int( UNIXTime / hourSec ) * hourSec
-	nextHour = currHour + hourSec
-
-	return nextHour
-
 def main():
 	response = weatherapi.weatherapi()
 	global font10
 	font10 = imagefont.imagefont.font(ttf, 10)
 	if font10 == None:
 		sys.exit("** Err Not found : %s" % ttf)
+	global m_update_data
+	global m_update_disp
+	schedule.every().hour.at(":00").do(cbr_every_hour)
+	schedule.every().minute.at(":00").do(cbr_every_minute)
 	while True:
-		api_data = response.get(True)
-		if response.status_code() != 200:
-			sys.exit("** Err Response : %d" % response.status_code())
+		if m_update_data == True:
+			m_update_data = False
+			api_data = response.get(True)
+			if response.status_code() != 200:
+				sys.exit("** Err Response : %d" % response.status_code())
+		if m_update_disp == True:
+			m_update_disp = False
+			display( api_data )
 
-		display( api_data )
-
-		timeCurrentUNIXTime = time.time()
-		sleep( getNextHourUNIXTime( timeCurrentUNIXTime ) - timeCurrentUNIXTime )
+		schedule.run_pending()
+		time.sleep(1)
 
 if __name__ == '__main__':
 	main()

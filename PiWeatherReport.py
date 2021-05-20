@@ -1,3 +1,4 @@
+import schedule
 import time
 from datetime import datetime
 
@@ -27,6 +28,18 @@ font32 = None
 
 basedir = os.path.dirname(os.path.realpath(__file__))
 icondir = os.path.join(basedir, 'icons')
+
+m_update_data = True
+m_update_disp = True
+def cbr_every_hour():
+	global m_update_data
+	global m_update_disp
+	m_update_data = True
+	m_update_disp = True
+
+def cbr_every_minute():
+	global m_update_disp
+	m_update_disp = True
 
 def get_display_item( data, index ):
 	return ( datetime.fromtimestamp(data["hourly"][index]["dt"]),
@@ -62,21 +75,7 @@ def display( data ):
 	item = get_display_item( data, 3 )	#Current hour + 3
 
 	time_curr = int(time.time())
-	time_prev = time_curr
 	display_screen( item, time_curr )
-	while (time_curr % 3600) != 0:
-		time_curr = int(time.time())
-		if (time_curr % 60 == 0) and (time_prev % 60 != 0):
-			display_screen( item, time_curr )
-		time_prev = time_curr
-		time.sleep(0.25)
-
-def getNextHourUNIXTime( UNIXTime ):
-	hourSec  = 60 * 60
-	currHour = int( UNIXTime / hourSec ) * hourSec
-	nextHour = currHour + hourSec
-
-	return nextHour
 
 def main():
 	response = weatherapi.weatherapi()
@@ -88,12 +87,20 @@ def main():
 	font32 = imagefont.imagefont.font(ttf, 32)
 	if font32 == None:
 		sys.exit("** Err Not found : %s" % ttf)
+	global m_update_data
+	global m_update_disp
+	schedule.every().hour.at(":00").do(cbr_every_hour)
+	schedule.every().minute.at(":00").do(cbr_every_minute)
 	while True:
-		api_data = response.get(True)
-		if response.status_code() != 200:
-			sys.exit("** Err Response : %d" % response.status_code())
-
-		display( api_data )
-
+		if m_update_data == True:
+			m_update_data = False
+			api_data = response.get(True)
+			if response.status_code() != 200:
+				sys.exit("** Err Response : %d" % response.status_code())
+		if m_update_disp == True:
+			m_update_disp = False
+			display( api_data )
+		schedule.run_pending()
+		time.sleep(1)
 if __name__ == '__main__':
 	main()

@@ -15,6 +15,7 @@ from time import sleep
 
 #for WebAPI
 import weatherapi
+response = None
 
 #for OLED
 serial = i2c(port=1, address=0x3C)
@@ -84,8 +85,7 @@ def display( data ):
 		display_clock( draw, int(time.time()) )
 	"""
 
-def main():
-	response = weatherapi.weatherapi()
+def setup():
 	global font10
 	font10 = imagefont.imagefont.font(ttf, 10)
 	if font10 == None:
@@ -96,10 +96,14 @@ def main():
 	if font32 == None:
 		sys.exit("** Err Not found : %s" % ttf)
 	"""
-	global m_update_data
-	global m_update_disp
 	schedule.every().hour.at(":00").do(cbr_every_hour)
 	schedule.every().minute.at(":00").do(cbr_every_minute)
+
+def loop():
+	global response
+	response = weatherapi.weatherapi()
+	global m_update_data
+	global m_update_disp
 	while True:
 		if m_update_data == True:
 			m_update_data = False
@@ -114,4 +118,5 @@ def main():
 		time.sleep(1)
 
 if __name__ == '__main__':
-	main()
+	setup()
+	loop()

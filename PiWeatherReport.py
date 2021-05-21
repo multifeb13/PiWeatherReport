@@ -97,7 +97,7 @@ def setup():
 		sys.exit("** Err Not found : %s" % ttf)
 	"""
 	schedule.every().hour.at(":00").do(cbr_every_hour)
-	schedule.every().minute.at(":00").do(cbr_every_minute)
+	#schedule.every().minute.at(":00").do(cbr_every_minute)
 
 def loop():
 	global response

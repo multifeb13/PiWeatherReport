@@ -36,22 +36,16 @@ def cbr_every_minute():
 	global m_update_disp
 	m_update_disp = True
 
-def get_display_item( data, index ):
-	return ( datetime.fromtimestamp(data["hourly"][index]["dt"]),
-			data["hourly"][index]["temp"],
-			data["hourly"][index]["humidity"],
-			data["hourly"][index]["weather"][0]["icon"] )
-
 def display( data ):
 	with canvas(device) as draw:
 		#Current hour + 3
-		item_info.display(draw, get_display_item( data, 3 ), 0, 0, device.width / 2, device.height)
+		item_info.display(draw, response.hourly(data, 3), 0, 0, device.width / 2, device.height)
 		item_separator.display(draw)
 		#Current hour + 6
-		item_info.display(draw, get_display_item( data, 6 ), device.width / 2, 0, device.width / 2, device.height)
+		item_info.display(draw, response.hourly(data, 6), device.width / 2, 0, device.width / 2, device.height)
 		"""
 		#Current hour + 3
-		item_info.display( draw, get_display_item( data, 3 ), 0, 0, device.width / 2, device.height)
+		item_info.display( draw, response.hourly(data, 3), 0, 0, device.width / 2, device.height)
 		item_clock.display(draw, device.width / 2)
 		"""
 

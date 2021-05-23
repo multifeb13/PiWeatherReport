@@ -70,12 +70,12 @@ def setup():
 	if item_clock.is_ready() == False:
 		exit(1)
 	"""
+	global response
+	response = weatherapi.weatherapi()
 	schedule.every().hour.at(":00").do(cbr_every_hour)
 	#schedule.every().minute.at(":00").do(cbr_every_minute)
 
 def loop():
-	global response
-	response = weatherapi.weatherapi()
 	global m_update_data
 	global m_update_disp
 	while True:

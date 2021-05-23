@@ -1,5 +1,6 @@
 import requests
 import json
+from datetime import datetime
 
 API_KEY = "{API_KEY}"
 api = "https://api.openweathermap.org/data/2.5/onecall?lat=35.681236&lon=139.767125&units=metric&lang=ja&appid={key}"
@@ -20,6 +21,12 @@ class weatherapi:
 		#print(m_status_code)
 
 		return json.loads( request.text )
+
+	def hourly(self, data, index):
+		return ( datetime.fromtimestamp(data["hourly"][index]["dt"]),
+				data["hourly"][index]["temp"],
+				data["hourly"][index]["humidity"],
+				data["hourly"][index]["weather"][0]["icon"] )
 
 	def status_code(self):
 		return m_status_code

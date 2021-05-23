@@ -5,6 +5,9 @@ library<br>
 	https://luma-oled.readthedocs.io/en/latest/software.html<br>
 	`sudo -H pip3 install --upgrade luma.oled`<br>
 
+- schedule<br>
+	`pip3 install schedule`<br>
+
 if required
 
 - libopenjp2-7<br>

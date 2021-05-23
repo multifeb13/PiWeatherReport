@@ -81,7 +81,7 @@ def loop():
 	while True:
 		if m_update_data == True:
 			m_update_data = False
-			api_data = response.get(True)
+			api_data = response.get()
 			if response.status_code() != 200:
 				sys.exit("** Err Response : %d" % response.status_code())
 		if m_update_disp == True:

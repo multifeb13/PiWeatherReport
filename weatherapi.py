@@ -10,7 +10,7 @@ class weatherapi:
 	def __init__(self):
 		pass
 
-	def get(self, mode_json=False):
+	def get(self):
 		url = api.format(key = API_KEY)
 		#print(url)
 
@@ -19,9 +19,7 @@ class weatherapi:
 		m_status_code = request.status_code
 		#print(m_status_code)
 
-		if mode_json == True:
-			return json.loads( request.text )
-		return request
+		return json.loads( request.text )
 
 	def status_code(self):
 		return m_status_code

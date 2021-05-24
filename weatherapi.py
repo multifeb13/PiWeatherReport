@@ -29,6 +29,13 @@ class weatherapi:
 				data["hourly"][index]["humidity"],
 				data["hourly"][index]["weather"][0]["icon"] )
 
+	def moon(self, data, index):
+		return (
+				datetime.fromtimestamp(data["daily"][index]["moonrise"]),
+				datetime.fromtimestamp(data["daily"][index]["moonset"]),
+				data["daily"][index]["moon_phase"],
+				)
+
 	def status_code(self):
 		return m_status_code
 

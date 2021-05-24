@@ -3,7 +3,8 @@ import json
 from datetime import datetime
 
 API_KEY = "{API_KEY}"
-api = "https://api.openweathermap.org/data/2.5/onecall?lat=35.681236&lon=139.767125&units=metric&lang=ja&appid={key}"
+EXCLUDE= "current,minutely"
+api = "https://api.openweathermap.org/data/2.5/onecall?lat=35.681236&lon=139.767125&units=metric&lang=ja&exclude={exclude}&appid={key}"
 
 m_status_code = 0
 
@@ -12,7 +13,7 @@ class weatherapi:
 		pass
 
 	def get(self):
-		url = api.format(key = API_KEY)
+		url = api.format(exclude = EXCLUDE, key = API_KEY)
 		#print(url)
 
 		request = requests.get(url)

@@ -10,6 +10,7 @@ from luma.oled.device import ssd1306
 import item
 item_info = None
 item_separator = None
+item_line = None
 item_clock = None
 
 import sys
@@ -38,6 +39,7 @@ def cbr_every_minute():
 
 def display( data ):
 	with canvas(device) as draw:
+		"""
 		#Current hour + 3
 		item_info.display(draw, response.hourly(data, 3), 0, 0, device.width / 2, device.height)
 		item_separator.display(draw)
@@ -47,7 +49,27 @@ def display( data ):
 		#Current hour + 3
 		item_info.display( draw, response.hourly(data, 3), 0, 0, device.width / 2, device.height)
 		item_clock.display(draw, device.width / 2)
-		"""
+		#moon age
+		moon_age = response.moon(data,0)[2]
+		if moon_age > 1:
+			moon_age = 1
+		moon_age_length = int(device.height * moon_age)
+		item_line.display(	draw,
+							device.width - 1, device.height - moon_age_length,
+							device.width - 1, device.height)
+		#gauge for moon age
+		#upper
+		item_line.display(	draw,
+							device.width - 3, 0,
+							device.width,     0)
+		#center
+		item_line.display(	draw,
+							device.width - 3, device.height / 2,
+							device.width,     device.height / 2)
+		#lower
+		item_line.display(	draw,
+							device.width - 3, device.height - 1,
+							device.width,     device.height - 1)
 
 def setup():
 	global item_info
@@ -58,16 +80,18 @@ def setup():
 	item_separator = item.separator(0, 0, device.width, device.height)
 	if item_separator.is_ready() == False:
 		sys.exit(1)
-	"""
+	global item_line
+	item_line = item.line()
+	if item_line.is_ready() == False:
+		sys.exit(1)
 	global item_clock
 	item_clock = item.clock()
 	if item_clock.is_ready() == False:
 		exit(1)
-	"""
 	global response
 	response = weatherapi.weatherapi()
 	schedule.every().hour.at(":00").do(cbr_every_hour)
-	#schedule.every().minute.at(":00").do(cbr_every_minute)
+	schedule.every().minute.at(":00").do(cbr_every_minute)
 
 def loop():
 	global m_update_data

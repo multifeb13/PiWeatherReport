@@ -67,6 +67,14 @@ class separator(item):
 			_y2 = self.center_y
 		draw.line( (_x1, _y1, _x2, _y2), width=1, fill="white")
 
+class line(item):
+	def __init__(self):
+		super().__init__()
+		self.ready = True
+
+	def display(self, draw, x1, y1, x2, y2):
+		draw.line( (x1, y1, x2, y2), width=1, fill="white")
+
 class clock(item):
 	def __init__(self, fontsize=32):
 		super().__init__()

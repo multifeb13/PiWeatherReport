@@ -58,7 +58,7 @@ def display( data ):
 							device.width - 1, device.height - moon_age_length,
 							device.width - 1, device.height)
 		#gauge for moon age
-		#upper
+		#new moon
 		item_line.display(	draw,
 							device.width - 3, 0,
 							device.width,     0)
@@ -74,7 +74,7 @@ def display( data ):
 		item_line.display(	draw,
 							device.width - 3, device.height / 4 * 3,
 							device.width,     device.height / 4 * 3)
-		#lower
+		#new moon
 		item_line.display(	draw,
 							device.width - 3, device.height - 1,
 							device.width,     device.height - 1)

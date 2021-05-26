@@ -59,25 +59,15 @@ def display( data ):
 							device.width - 1, device.height)
 		#gauge for moon age
 		#new moon
-		item_line.display(	draw,
-							device.width - 3, 0,
-							device.width,     0)
-		#waning moon
-		item_line.display(	draw,
-							device.width - 3, device.height / 4,
-							device.width,     device.height / 4)
-		#center
-		item_line.display(	draw,
-							device.width - 3, device.height / 2,
-							device.width,     device.height / 2)
-		#waxing moon
-		item_line.display(	draw,
-							device.width - 3, device.height / 4 * 3,
-							device.width,     device.height / 4 * 3)
-		#new moon
-		item_line.display(	draw,
-							device.width - 3, device.height - 1,
-							device.width,     device.height - 1)
+		gauge_x = device.width
+		gauge_step = 4	#4 steps, 5 lines
+		for i in range(gauge_step + 1):
+			gauge_y = device.height / gauge_step * i
+			if gauge_y >= device.height:
+				gauge_y = device.height - 1
+			item_line.display(	draw,
+								gauge_x - 3,	gauge_y,
+								gauge_x, 		gauge_y)
 
 def setup():
 	global item_info

@@ -62,10 +62,18 @@ def display( data ):
 		item_line.display(	draw,
 							device.width - 3, 0,
 							device.width,     0)
+		#waning moon
+		item_line.display(	draw,
+							device.width - 3, device.height / 4,
+							device.width,     device.height / 4)
 		#center
 		item_line.display(	draw,
 							device.width - 3, device.height / 2,
 							device.width,     device.height / 2)
+		#waxing moon
+		item_line.display(	draw,
+							device.width - 3, device.height / 4 * 3,
+							device.width,     device.height / 4 * 3)
 		#lower
 		item_line.display(	draw,
 							device.width - 3, device.height - 1,

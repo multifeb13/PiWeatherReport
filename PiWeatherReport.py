@@ -10,6 +10,7 @@ from luma.oled.device import ssd1306
 import item
 item_info = None
 item_separator = None
+item_line = None
 item_clock = None
 
 import sys
@@ -47,6 +48,25 @@ def display( data ):
 		#Current hour + 3
 		item_info.display( draw, response.hourly(data, 3), 0, 0, device.width / 2, device.height)
 		item_clock.display(draw, device.width / 2)
+		#moon age
+		moon_age = response.moon(data,0)[2]
+		if moon_age > 1:
+			moon_age = 1
+		moon_age_length = int(device.height * moon_age)
+		item_line.display(	draw,
+							device.width - 1, device.height - moon_age_length,
+							device.width - 1, device.height)
+		#gauge for moon age
+		#new moon
+		gauge_x = device.width
+		gauge_step = 4	#4 steps, 5 lines
+		for i in range(gauge_step + 1):
+			gauge_y = device.height / gauge_step * i
+			if gauge_y >= device.height:
+				gauge_y = device.height - 1
+			item_line.display(	draw,
+								gauge_x - 3,	gauge_y,
+								gauge_x, 		gauge_y)
 		"""
 
 def setup():
@@ -58,12 +78,14 @@ def setup():
 	item_separator = item.separator(0, 0, device.width, device.height)
 	if item_separator.is_ready() == False:
 		sys.exit(1)
-	"""
+	global item_line
+	item_line = item.line()
+	if item_line.is_ready() == False:
+		sys.exit(1)
 	global item_clock
 	item_clock = item.clock()
 	if item_clock.is_ready() == False:
 		exit(1)
-	"""
 	global response
 	response = weatherapi.weatherapi()
 	schedule.every().hour.at(":00").do(cbr_every_hour)

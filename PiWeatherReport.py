@@ -9,6 +9,7 @@ from luma.oled.device import ssd1306
 
 import screen
 _screen = None
+_screen_mode = 2
 
 from time import sleep
 
@@ -35,12 +36,15 @@ def cbr_every_minute():
 def setup():
 	global response
 	response = weatherapi.weatherapi()
-	schedule.every().hour.at(":00").do(cbr_every_hour)
-	#schedule.every().minute.at(":00").do(cbr_every_minute)
 
 	global _screen
-	_screen = screen.screen_2items(device)
-	#_screen = screen.screen_item_with_clock(device)
+	if _screen_mode == 1:
+		schedule.every().hour.at(":00").do(cbr_every_hour)
+		_screen = screen.screen_2items(device)
+	else:
+		schedule.every().hour.at(":00").do(cbr_every_hour)
+		schedule.every().minute.at(":00").do(cbr_every_minute)
+		_screen = screen.screen_item_with_clock(device)
 
 def loop():
 	global m_update_data

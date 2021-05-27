@@ -64,5 +64,5 @@ class screen_item_with_clock(screen):
 			if gauge_y >= self.device.height:
 				gauge_y = self.device.height - 1
 			self.item_line.display(	draw,
-									gauge_x - 3,	gauge_y,
+									gauge_x - 4,	gauge_y,
 									gauge_x, 		gauge_y)

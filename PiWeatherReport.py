@@ -7,13 +7,8 @@ from luma.core.interface.serial import i2c
 from luma.core.render import canvas
 from luma.oled.device import ssd1306
 
-import item
-item_info = None
-item_separator = None
-item_line = None
-item_clock = None
-
-import sys
+import screen
+_screen = None
 
 from time import sleep
 
@@ -37,59 +32,15 @@ def cbr_every_minute():
 	global m_update_disp
 	m_update_disp = True
 
-def display( data ):
-	with canvas(device) as draw:
-		#Current hour + 3
-		item_info.display(draw, response.hourly(data, 3), 0, 0, device.width / 2, device.height)
-		item_separator.display(draw)
-		#Current hour + 6
-		item_info.display(draw, response.hourly(data, 6), device.width / 2, 0, device.width / 2, device.height)
-		"""
-		#Current hour + 3
-		item_info.display( draw, response.hourly(data, 3), 0, 0, device.width / 2, device.height)
-		item_clock.display(draw, device.width / 2)
-		#moon age
-		moon_age = response.moon(data,0)[2]
-		if moon_age > 1:
-			moon_age = 1
-		moon_age_length = int(device.height * moon_age)
-		item_line.display(	draw,
-							device.width - 1, device.height - moon_age_length,
-							device.width - 1, device.height)
-		#gauge for moon age
-		#new moon
-		gauge_x = device.width
-		gauge_step = 4	#4 steps, 5 lines
-		for i in range(gauge_step + 1):
-			gauge_y = device.height / gauge_step * i
-			if gauge_y >= device.height:
-				gauge_y = device.height - 1
-			item_line.display(	draw,
-								gauge_x - 3,	gauge_y,
-								gauge_x, 		gauge_y)
-		"""
-
 def setup():
-	global item_info
-	item_info = item.info()
-	if item_info.is_ready() == False:
-		sys.exit(1)
-	global item_separator
-	item_separator = item.separator(0, 0, device.width, device.height)
-	if item_separator.is_ready() == False:
-		sys.exit(1)
-	global item_line
-	item_line = item.line()
-	if item_line.is_ready() == False:
-		sys.exit(1)
-	global item_clock
-	item_clock = item.clock()
-	if item_clock.is_ready() == False:
-		exit(1)
 	global response
 	response = weatherapi.weatherapi()
 	schedule.every().hour.at(":00").do(cbr_every_hour)
 	#schedule.every().minute.at(":00").do(cbr_every_minute)
+
+	global _screen
+	_screen = screen.screen_2items(device)
+	#_screen = screen.screen_item_with_clock(device)
 
 def loop():
 	global m_update_data
@@ -102,7 +53,8 @@ def loop():
 				sys.exit("** Err Response : %d" % response.status_code())
 		if m_update_disp == True:
 			m_update_disp = False
-			display( api_data )
+			with canvas(device) as draw:
+				_screen.display(draw, api_data)
 
 		schedule.run_pending()
 		time.sleep(1)

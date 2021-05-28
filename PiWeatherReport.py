@@ -11,6 +11,8 @@ import screen
 _screen = None
 _screen_mode = 2
 
+import sys
+
 from time import sleep
 
 #for WebAPI
